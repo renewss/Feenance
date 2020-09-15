@@ -33,7 +33,7 @@ app.listen(Port, () => {
 
 // Central error(unhandled promise rejection) handling
 process.on('unhandledRejection', (err) => {
-  console.log(err.name, err.message);
+  console.log(err);
   console.log('UNHANDLED REJECTION! Shutting down server');
 
   server.close(() => {

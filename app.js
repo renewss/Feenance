@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const userRouter = require('./routes/userRoutes');
+const operationRouter = require('./routes/operationRoutes');
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.get('/', (req, res, next) => {
 
 // ROUTES
 app.use('/api/v1/user', userRouter);
+app.use('/api/v1/operation', operationRouter);
 
 // ERROR HANDLING
 // Catching unhandled requests

@@ -66,7 +66,11 @@ exports.create = catchAsync(async (req, res, next) => {
 });
 
 exports.getOne = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.params.id).populate('link', 'name role ');
+  const user = await User.findById(req.params.id)
+    .populate('link', 'name role ')
+    .populate('operations', 'opType amount madeAt');
+
+  user.calculateBalance();
 
   res.status(200).json({
     status: 'success',

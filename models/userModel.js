@@ -67,17 +67,7 @@ userSchema.virtual('operations', {
   localField: '_id',
 });
 
-userSchema.virtual('currentAmount').get(async function () {
-  await this.populate('operations');
-
-  let amount = 0;
-  this.operations.forEach((val) => {
-    if (val.opType === 'Debt') amount -= val.amount * 1;
-    else amount += val.amount * 1;
-  });
-
-  return amount;
-});
+userSchema.virtual('balance');
 
 // MIDDLEWARES
 userSchema.pre('save', async function (next) {
@@ -92,6 +82,18 @@ userSchema.pre('save', async function (next) {
 userSchema.methods.correctPassword = async function (candidate) {
   // return await bcrypt.compare(candidate, this.password);
   return this.password === candidate;
+};
+
+userSchema.methods.calculateBalance = async function () {
+  if (!this.operations) return;
+
+  let amount = 0;
+  this.operations.forEach((val) => {
+    if (val.opType === 'Debt') amount -= val.amount * 1;
+    else amount += val.amount * 1;
+  });
+
+  this.balance = amount;
 };
 
 const User = mongoose.model('User', userSchema);
