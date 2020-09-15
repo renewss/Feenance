@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.use(authController.protect, authController.restrictTo('Admin'));
 
-router.route('/').post(operationController.create);
+router.route('/').get(operationController.getAll).post(operationController.create);
+router.route('/:id').get(operationController.getOne).delete(operationController.deleteOne);
 
 module.exports = router;

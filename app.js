@@ -1,11 +1,13 @@
 const express = require('express');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
+const axios = require('axios');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const userRouter = require('./routes/userRoutes');
 const operationRouter = require('./routes/operationRoutes');
+const keepAliveRouter = require('./routes/keepAlive');
 
 const app = express();
 
@@ -22,6 +24,14 @@ app.get('/', (req, res, next) => {
 // ROUTES
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/operation', operationRouter);
+
+// Keep Alive
+app.use(`/api/v1/keep-alive`, keepAliveRouter);
+setInterval(() => {
+  axios.get(`${process.env.DOMAIN}api/v1/keep-alive/${process.env.SECRET_PATH}`).catch((err) => {
+    console.log(err);
+  });
+}, 1000 * 60 * 25);
 
 // ERROR HANDLING
 // Catching unhandled requests

@@ -70,6 +70,8 @@ exports.getOne = catchAsync(async (req, res, next) => {
     .populate('link', 'name role ')
     .populate('operations', 'opType amount madeAt');
 
+  if (!user) return next(new AppError('User Not Found', 404));
+
   user.calculateBalance();
 
   res.status(200).json({
@@ -81,11 +83,17 @@ exports.getOne = catchAsync(async (req, res, next) => {
 });
 
 exports.getAll = catchAsync(async (req, res, next) => {
-  const excludedFields = ['fields']; // fields used for other purposes
-  const queryStr = { ...req.query };
+  let queryStr = {},
+    projection = {};
 
-  excludedFields.forEach((val) => delete queryStr[val]); // filter
-  const projection = req.query.fields.split(',').join(' '); // limited fields
+  // if has query
+  if (Object.keys(req.query).length != 0) {
+    const excludedFields = ['fields']; // fields used for other purposes
+    queryStr = { ...req.query };
+
+    excludedFields.forEach((val) => delete queryStr[val]); // filter
+    projection = req.query.fields.split(',').join(' '); // limited fields
+  }
 
   const users = await User.find(JSON.parse(JSON.stringify(queryStr)))
     .select(projection)
