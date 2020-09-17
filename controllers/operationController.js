@@ -1,9 +1,21 @@
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const Operation = require('../models/operationModel');
+const User = require('../models/userModel');
 
 exports.create = catchAsync(async (req, res, next) => {
   const operations = await Operation.create(req.body);
+
+  let prms = new Array();
+  for (val of operations) {
+    const user = await User.findById(val.user);
+
+    user.calculateBalance(val);
+    user.confirmPassword = user.password;
+    console.log(user);
+    prms.push(user.save({ validateBeforeSave: false }));
+  }
+  await Promise.all(prms);
 
   res.status(200).json({
     status: 'success',
