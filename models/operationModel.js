@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const operationSchema = new mongoose.Schema({
   opType: {
     type: String,
-    enum: ['Debt', 'Payment'],
+    enum: ['Debt', 'Payment', 'Return'],
     required: true,
   },
   amount: {

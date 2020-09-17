@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const AppError = require('../utils/appError');
+const Operation = require('./operationModel');
 
 const userSchema = new mongoose.Schema(
   {
@@ -53,6 +54,10 @@ const userSchema = new mongoose.Schema(
     lastvisit: {
       type: Date,
     },
+    balance: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -66,8 +71,6 @@ userSchema.virtual('operations', {
   foreignField: 'user',
   localField: '_id',
 });
-
-userSchema.virtual('balance');
 
 // MIDDLEWARES
 userSchema.pre('save', async function (next) {
@@ -84,16 +87,11 @@ userSchema.methods.correctPassword = async function (candidate) {
   return this.password === candidate;
 };
 
-userSchema.methods.calculateBalance = async function () {
-  if (!this.operations) return;
+userSchema.methods.calculateBalance = function (operation) {
+  if (!operation) return;
 
-  let amount = 0;
-  this.operations.forEach((val) => {
-    if (val.opType === 'Debt') amount -= val.amount * 1;
-    else amount += val.amount * 1;
-  });
-
-  this.balance = amount;
+  if (operation.opType === 'Debt') this.balance -= operation.amount * 1;
+  else this.balance += operation.amount * 1;
 };
 
 const User = mongoose.model('User', userSchema);

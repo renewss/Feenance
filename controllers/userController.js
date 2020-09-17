@@ -72,8 +72,6 @@ exports.getOne = catchAsync(async (req, res, next) => {
 
   if (!user) return next(new AppError('User Not Found', 404));
 
-  user.calculateBalance();
-
   res.status(200).json({
     status: 'success',
     data: {
