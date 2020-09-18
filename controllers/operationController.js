@@ -12,7 +12,6 @@ exports.create = catchAsync(async (req, res, next) => {
 
     user.calculateBalance(val);
     user.confirmPassword = user.password;
-    console.log(user);
     prms.push(user.save({ validateBeforeSave: false }));
   }
   await Promise.all(prms);
