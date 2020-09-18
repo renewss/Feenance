@@ -6,6 +6,7 @@ const hpp = require('hpp');
 const xss = require('xss');
 const compression = require('compression');
 const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 app.use(morgan('tiny'));
 
+app.use(mongoSanitize());
 app.use(xss());
 app.use(hpp({ whitelist: ['user'] }));
 app.use(compression());
