@@ -8,8 +8,12 @@ const router = express.Router();
 router.post('/login', authController.login);
 router.post('/logout', authController.logout);
 
+router.use(authController.protect);
+// Protected My Routes
+router.route('/me').get(userController.getMe);
+
 // Admin Routes
-router.use(authController.protect, authController.restrictTo('Admin'));
+router.use(authController.restrictTo('Admin'));
 router.route('/').get(userController.getAll).post(userController.create);
 router
   .route('/:id')

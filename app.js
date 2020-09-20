@@ -3,7 +3,6 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const axios = require('axios');
 const hpp = require('hpp');
-const xss = require('xss');
 const compression = require('compression');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
@@ -25,7 +24,6 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(morgan('tiny'));
 
 app.use(mongoSanitize());
-app.use(xss());
 app.use(hpp({ whitelist: ['user'] }));
 app.use(compression());
 
