@@ -6,6 +6,10 @@ const operationSchema = new mongoose.Schema({
     enum: ['Debt', 'Payment', 'Return'],
     required: true,
   },
+  branch: {
+    type: String,
+    required: true,
+  },
   amount: {
     type: Number,
     required: true,
