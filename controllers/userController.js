@@ -29,7 +29,17 @@ const validateLink = async (role, id) => {
 };
 
 //
+// My Controllers
+exports.getMe = catchAsync(async (req, res, next) => {
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user: req.user,
+    },
+  });
+});
 
+// Admin Controllers
 exports.create = catchAsync(async (req, res, next) => {
   const links = await Promise.all(
     req.body.map(async (val) => {
