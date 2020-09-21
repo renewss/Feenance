@@ -76,3 +76,15 @@ exports.deleteOne = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.dropCollection = catchAsync(async (req, res, next) => {
+  Operation.collection.drop();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Collection dropped',
+    data: {
+      operations: null,
+    },
+  });
+});
