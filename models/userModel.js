@@ -56,7 +56,6 @@ const userSchema = new mongoose.Schema(
         branch: {
           type: String,
           required: true,
-          unique: true,
         },
         amount: {
           type: Number,
@@ -95,17 +94,13 @@ userSchema.methods.correctPassword = async function (candidate) {
 
 userSchema.methods.calculateBalance = function (operation) {
   if (!operation) return;
-  console.log(1);
 
-  if (this.balance.length === 0) {
-    console.log(1.5);
+  if (this.balance.length === 0 || !this.balance.some((val) => val.branch === operation.branch)) {
     this.balance.push({ branch: operation.branch, amount: 0 });
   }
 
   for (i in this.balance) {
-    console.log(2);
     if (this.balance[i].branch === operation.branch) {
-      console.log(3);
       if (operation.opType === 'Debt') this.balance[i].amount -= operation.amount * 1;
       else this.balance[i].amount += operation.amount * 1;
     }
