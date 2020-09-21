@@ -77,8 +77,9 @@ exports.create = catchAsync(async (req, res, next) => {
 
 exports.getOne = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.params.id)
+    .select('-__v')
     .populate('link', 'name role ')
-    .populate('operations', 'opType amount madeAt');
+    .populate('operations', 'branch opType amount madeAt');
 
   if (!user) return next(new AppError('User Not Found', 404));
 

@@ -9,6 +9,7 @@ exports.create = catchAsync(async (req, res, next) => {
   let prms = new Array();
   for (val of operations) {
     const user = await User.findById(val.user);
+    if (!user) return next(new AppError('No User Found for given link', 404));
 
     user.calculateBalance(val);
     user.confirmPassword = user.password;

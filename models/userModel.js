@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const AppError = require('../utils/appError');
-const Operation = require('./operationModel');
 
 const userSchema = new mongoose.Schema(
   {
@@ -54,10 +51,18 @@ const userSchema = new mongoose.Schema(
     lastvisit: {
       type: Date,
     },
-    balance: {
-      type: Number,
-      default: 0,
-    },
+    balance: [
+      {
+        branch: {
+          type: String,
+          required: true,
+        },
+        amount: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },
@@ -90,8 +95,16 @@ userSchema.methods.correctPassword = async function (candidate) {
 userSchema.methods.calculateBalance = function (operation) {
   if (!operation) return;
 
-  if (operation.opType === 'Debt') this.balance -= operation.amount * 1;
-  else this.balance += operation.amount * 1;
+  if (this.balance.length === 0 || !this.balance.some((val) => val.branch === operation.branch)) {
+    this.balance.push({ branch: operation.branch, amount: 0 });
+  }
+
+  for (i in this.balance) {
+    if (this.balance[i].branch === operation.branch) {
+      if (operation.opType === 'Debt') this.balance[i].amount -= operation.amount * 1;
+      else this.balance[i].amount += operation.amount * 1;
+    }
+  }
 };
 
 const User = mongoose.model('User', userSchema);
