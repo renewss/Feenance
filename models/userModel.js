@@ -24,10 +24,17 @@ const userSchema = new mongoose.Schema(
       default: 'User',
     },
     // link to elder rank users, User -> Lead, Lead -> Admin
-    link: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    },
+    link: [
+      {
+        branch: {
+          type: String,
+        },
+        reference: {
+          type: mongoose.Types.ObjectId,
+          ref: 'User',
+        },
+      },
+    ],
     password: {
       type: String,
       minlength: 4,
