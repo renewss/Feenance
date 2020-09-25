@@ -44,6 +44,22 @@ exports.getMe = catchAsync(async (req, res, next) => {
     },
   });
 });
+// Lead Routes
+exports.getMy = catchAsync(async (req, res, next) => {
+  const query = { 'link.reference': req.user._id };
+  const projection = '-__v -createdAt -link';
+
+  const users = await User.find(query).select(projection);
+  if (!users) return next(new AppError('No user found', 404));
+
+  res.status(200).json({
+    status: 'success',
+    result: users.length,
+    data: {
+      users,
+    },
+  });
+});
 
 // Admin Controllers
 exports.create = catchAsync(async (req, res, next) => {
@@ -173,6 +189,20 @@ exports.deleteOne = catchAsync(async (req, res, next) => {
     message: 'User deleted',
     data: {
       user: null,
+    },
+  });
+});
+
+exports.deleteUsers = catchAsync(async (req, res, next) => {
+  const users = await User.deleteMany({ role: 'User' });
+
+  if (!users) return next(new AppError('No user found', 404));
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Users deleted',
+    data: {
+      users: null,
     },
   });
 });
