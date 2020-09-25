@@ -29,26 +29,7 @@ const createAndSendToken = (user, status, req, res) => {
   });
 };
 
-const validateLink = async (role, id) => {
-  // Admin has no link
-  if (role === 'Admin') return undefined;
-
-  // for all Leads link is Admin
-  if (role === 'Lead') {
-    const admin = await User.findOne({ role: 'Admin' });
-    return admin._id;
-  }
-
-  // if link is given
-  if (!id) return;
-
-  const lead = await User.findById(id);
-  if (!lead) return new AppError('Lead NOT FOUND', 404);
-  if (lead.role !== 'Lead') return new AppError('Link User must be "Lead" only', 400);
-  return lead._id;
-};
 // CONTROLLERS
-
 exports.signup = catchAsync(async (req, res, next) => {
   const leadId = await validateLink(req.body.role, req.body.link);
   if (leadId.constructor.name === 'AppError') return next(leadId);
